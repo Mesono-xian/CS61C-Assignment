@@ -2,10 +2,10 @@
 
 
 /* Only change any of these 4 values */
-#define V0 0
-#define V1 -1
-#define V2 0
-#define V3 0
+#define V0 3
+#define V1 3
+#define V2 3
+#define V3 3
 
 int main(void) {
     int a;
