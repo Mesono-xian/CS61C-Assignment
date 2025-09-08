@@ -16,13 +16,42 @@
 #include <stdlib.h>
 #include <inttypes.h>
 #include "imageloader.h"
-
+#define wrap(index,dem) (((index) + (dem)) % (dem))
+//get a specific bit of a decimal
+int GetBit(int dec,int dig)
+{
+	return (dec >> dig) & 1;
+}
+//merge the RGB
+int MergeRGB(Color color)
+{
+	return (color.R << 16) | (color.G << 8) | (color.B);
+}
+//Get the state of each bit
+int GetAlive(Color color,int bit)
+{
+	return GetBit(MergeRGB())
+}
+//Count the number of alive neighbor
+int TotalAliveNeighbor(Image *image,int row,int col,int dig)
+{
+	Color** now = image->image;
+	int tot = 
+}
 //Determines what color the cell at the given row/col should be. This function allocates space for a new Color.
 //Note that you will need to read the eight neighbors of the cell in question. The grid "wraps", so we treat the top row as adjacent to the bottom row
 //and the left column as adjacent to the right column.
 Color *evaluateOneCell(Image *image, int row, int col, uint32_t rule)
 {
 	//YOUR CODE HERE
+	Color pre = image->image[row][col];
+	Color* new_color = (Color*)malloc(sizeof(Color));
+	int PreRGB = MergeRGB(pre);
+	for(int i=0;i<24;i++)
+	{
+		int bit = GetBit(PreRGB,i);
+
+	}
 }
 
 //The main body of Life; given an image and a rule, computes one iteration of the Game of Life.
