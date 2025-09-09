@@ -155,7 +155,6 @@ int main(int argc, char **argv)
     }
 
 	Image *image = readData(filename);
-
     Image *new_image = life(image, NumRule);
 
     writeData(new_image);
