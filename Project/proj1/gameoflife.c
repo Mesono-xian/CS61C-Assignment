@@ -38,7 +38,6 @@ int GetAlive(Image *image,int x,int y,int dig)
 //Count the number of alive neighbor
 int TotalAliveNeighbor(Image *image,int row,int col,int dig)
 {
-	Color** now = image->image;
 	int dx[8] = {-1,-1,-1,0,0,1,1,1};
 	int dy[8] = {-1,0,1,-1,1,-1,0,1};
 	int alive;
@@ -101,6 +100,27 @@ Color *evaluateOneCell(Image *image, int row, int col, uint32_t rule)
 Image *life(Image *image, uint32_t rule)
 {
 	//YOUR CODE HERE
+	Image *IteImage = (Image *)malloc(sizeof(Image));
+	int rows = image->rows;
+	int cols = image->cols;
+	IteImage->rows =rows;
+	IteImage->cols = cols;
+	IteImage->image = (Color**)malloc(rows * sizeof(Color*));
+	for(int r=0;r<rows;r++)
+	{
+		IteImage->image[r] = (Color*)malloc(cols * sizeof(Color));
+	}
+	for(int i=0;i<rows;i++)
+	{
+		for(int j=0;j<cols;j++)
+		{
+			
+			Color *new_pixel = evaluateOneCell(image,i,j,rule);
+			IteImage->image[i][j] = *new_pixel;
+			free(new_pixel);
+		}
+	}
+	return IteImage;
 }
 
 /*
@@ -121,4 +141,26 @@ You may find it useful to copy the code from steganography.c, to start.
 int main(int argc, char **argv)
 {
 	//YOUR CODE HERE
+	if(argc != 3)
+	{
+		exit(-1);
+	}
+	char *filename = argv[1];
+	char *rule = argv[2];
+	char *endptr;
+	int NumRule = strtol(rule,&endptr,16);
+	if (*endptr != '\0' || NumRule < 0x00000 || NumRule > 0x3FFFF) 
+	{
+        exit(-1);
+    }
+
+	Image *image = readData(filename);
+
+    Image *new_image = life(image, NumRule);
+
+    writeData(new_image);
+    freeImage(image);
+    freeImage(new_image);
+
+    return 0; 
 }
