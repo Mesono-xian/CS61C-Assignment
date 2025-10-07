@@ -10,10 +10,9 @@
 # =================================================================
 abs:
     # Prologue
-
-    # return 0
-    mv a0, zero
-
+    # ABS  
+    bge a0, zero, finish # if a0 >= zero then finish
+    sub a0, zero, a0 # a0 = zero - a0
     # Epilogue
-
+finish:
     ret
