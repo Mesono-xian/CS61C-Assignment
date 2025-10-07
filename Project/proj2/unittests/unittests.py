@@ -62,19 +62,29 @@ class TestArgmax(TestCase):
     def test_simple(self):
         t = AssemblyTest(self, "argmax.s")
         # create an array in the data section
-        raise NotImplementedError("TODO")
+        array = t.array([1,2,3,0,-1,-4,5,5])
         # TODO
         # load address of the array into register a0
+        t.input_array("a0",array)
         # TODO
         # set a1 to the length of the array
+        t.input_scalar("a1",len(array))
         # TODO
         # call the `argmax` function
+        t.call("argmax")
         # TODO
         # check that the register a0 contains the correct output
+        t.check_scalar("a0",6)
         # TODO
         # generate the `assembly/TestArgmax_test_simple.s` file and run it through venus
         t.execute()
-
+    def test_zero_size(self):
+        t = AssemblyTest(self, "argmax.s")
+        array1 = t.array([])
+        t.input_array("a0",array1)
+        t.input_scalar("a1",len(array1))
+        t.call("argmax")
+        t.execute(code=77)
     @classmethod
     def tearDownClass(cls):
         print_coverage("argmax.s", verbose=False)
@@ -84,18 +94,63 @@ class TestDot(TestCase):
     def test_simple(self):
         t = AssemblyTest(self, "dot.s")
         # create arrays in the data section
-        raise NotImplementedError("TODO")
+        arr1 = t.array([1, 2, 3, 4, 5, 6, 7, 8, 9])
+        arr2 = t.array([1, 2, 3, 4, 5, 6, 7, 8, 9])
         # TODO
         # load array addresses into argument registers
+        t.input_array("a0",arr1)
+        t.input_array("a1",arr2)
         # TODO
         # load array attributes into argument registers
+        t.input_scalar("a2",len(arr1))
+        t.input_scalar("a3",1)
+        t.input_scalar("a4",1)
         # TODO
         # call the `dot` function
         t.call("dot")
         # check the return value
         # TODO
+        t.check_scalar("a0",285)
         t.execute()
-
+    def test_zero_size(self):
+        t = AssemblyTest(self, "dot.s")
+        arr1 = t.array([])
+        arr2 = t.array([])
+        t.input_array("a0",arr1)
+        t.input_array("a1",arr2)
+        t.input_scalar("a2",len(arr1))
+        t.input_scalar("a3",1)
+        t.input_scalar("a4",1)
+        t.call("dot")
+        t.execute(code=75)
+    def test_zero_stride(self):
+        t = AssemblyTest(self, "dot.s")
+        arr1 = t.array([1, 2, 3, 4, 5, 6, 7, 8, 9])
+        arr2 = t.array([1, 2, 3, 4, 5, 6, 7, 8, 9])
+        t.input_array("a0",arr1)
+        t.input_array("a1",arr2)
+        t.input_scalar("a2",len(arr1))
+        t.input_scalar("a3",0)
+        t.input_scalar("a4",0)
+        t.call("dot")
+        t.execute(code=76)
+    def test_stride(self):
+        t = AssemblyTest(self, "dot.s")
+        # create arrays in the data section
+        array0 = t.array([1, 2, 3, 4, 5, 6, 7, 8, 9])
+        array1 = t.array([1, 2, 3, 4, 5, 6, 7, 8, 9])
+        # load array addresses into argument registers
+        t.input_array("a0", array0)
+        t.input_array("a1", array1)
+        # load array attributes into argument registers
+        t.input_scalar("a2", 3)
+        t.input_scalar("a3", 1)
+        t.input_scalar("a4", 2)
+        # call the `dot` function
+        t.call("dot")
+        # check the return value
+        t.check_scalar("a0", 22)
+        t.execute()
     @classmethod
     def tearDownClass(cls):
         print_coverage("dot.s", verbose=False)
