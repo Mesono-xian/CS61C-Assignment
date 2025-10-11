@@ -29,18 +29,21 @@ classify:
 	# =====================================
     # LOAD MATRICES
     # =====================================
+    li t0, 5
+    bne a0, t0, exit_args
 
+    addi sp, sp, -16
+    sw ra, 0(sp)
+    sw s0, 4(sp)
+    sw s1, 8(sp)
+    sw s2, 12(sp)
 
+    mv s0, a0
+    mv s1, a1
+    mv s2, a2
 
-
-
-
-    # Load pretrained m0
-
-
-
-
-
+    # Load pretrained m0 -> argv[1]
+    lw a0, 4(s1)
 
     # Load pretrained m1
 
@@ -106,3 +109,6 @@ classify:
 
 
     ret
+exit_args:
+    li a1, 89
+    jal exit2
