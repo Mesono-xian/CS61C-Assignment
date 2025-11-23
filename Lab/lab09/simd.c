@@ -53,9 +53,29 @@ long long int sum_simd(int vals[NUM_ELEMS]) {
 	
 	for(unsigned int w = 0; w < OUTER_ITERATIONS; w++) {
 		/* YOUR CODE GOES HERE */
-
+		int i = 0;
+		__m128i vec1 = _mm_setzero_si128();
+		int limit = NUM_ELEMS / 4 * 4;
+		while (i < limit)
+		{
+			/* code */
+			__m128i vec_data = _mm_loadu_si128((__m128i *)(vals + i));
+			__m128i cmp = _mm_cmpgt_epi32(vec_data,_127);
+			__m128i vecf = _mm_and_si128(vec_data,cmp);
+			vec1 = _mm_add_epi32(vec1,vecf);
+			i += 4;
+		}
 		/* You'll need a tail case. */
-
+		while (i < NUM_ELEMS) {
+            if (vals[i] >= 128) {
+                result += vals[i];
+            }
+            i++;
+        }
+		int final[4] = {0};
+		_mm_storeu_si128((__m128i *)final,vec1);
+		for(int k = 0;k < 4;k++)
+			result += final[k];
 	}
 	clock_t end = clock();
 	printf("Time taken: %Lf s\n", (long double)(end - start) / CLOCKS_PER_SEC);
@@ -69,9 +89,45 @@ long long int sum_simd_unrolled(int vals[NUM_ELEMS]) {
 	for(unsigned int w = 0; w < OUTER_ITERATIONS; w++) {
 		/* COPY AND PASTE YOUR sum_simd() HERE */
 		/* MODIFY IT BY UNROLLING IT */
+		int i = 0;
+		__m128i vec1 = _mm_setzero_si128();
+		int limit = NUM_ELEMS / 16 * 16;
+		while (i < limit)
+		{
+			/* code */
+			__m128i vec_data = _mm_loadu_si128((__m128i *)(vals + i));
+			__m128i cmp = _mm_cmpgt_epi32(vec_data,_127);
+			__m128i vecf = _mm_and_si128(vec_data,cmp);
+			vec1 = _mm_add_epi32(vec1,vecf);
+			
+			vec_data = _mm_loadu_si128((__m128i *)(vals + i + 4));
+			cmp = _mm_cmpgt_epi32(vec_data,_127);
+			vecf = _mm_and_si128(vec_data,cmp);
+			vec1 = _mm_add_epi32(vec1,vecf);
 
-		/* You'll need 1 or maybe 2 tail cases here. */
+			vec_data = _mm_loadu_si128((__m128i *)(vals + i + 8));
+			cmp = _mm_cmpgt_epi32(vec_data,_127);
+			vecf = _mm_and_si128(vec_data,cmp);
+			vec1 = _mm_add_epi32(vec1,vecf);
 
+			vec_data = _mm_loadu_si128((__m128i *)(vals + i + 12));
+			cmp = _mm_cmpgt_epi32(vec_data,_127);
+			vecf = _mm_and_si128(vec_data,cmp);
+			vec1 = _mm_add_epi32(vec1,vecf);
+			
+			i += 16;
+		}
+		/* You'll need a tail case. */
+		while (i < NUM_ELEMS) {
+            if (vals[i] >= 128) {
+                result += vals[i];
+            }
+            i++;
+        }
+		int final[4] = {0};
+		_mm_storeu_si128((__m128i *)final,vec1);
+		for(int k = 0;k < 4;k++)
+			result += final[k];
 	}
 	clock_t end = clock();
 	printf("Time taken: %Lf s\n", (long double)(end - start) / CLOCKS_PER_SEC);
