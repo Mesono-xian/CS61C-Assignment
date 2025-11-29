@@ -253,21 +253,22 @@ void serve_forever(int *socket_number) {
 #ifdef PROC
       // PART 2 TASK: Implement forking
       /* YOUR CODE HERE */
-
-      if (/* YOUR CODE HERE */) {
+      pid_t child_pid = fork();
+      if (child_pid == 0) { // is child process
          // This line kills the child process if parent dies
          int r = prctl(PR_SET_PDEATHSIG, SIGTERM);
 
          /* YOUR CODE HERE */
-         
+         dispatch(client_socket_number);
+         exit(0);
          // These lines exit the current process with code 1 
          // 1) when there was an error in prctl, 2) when the parent has been killed
          if (r == -1 || getppid() != parent_pid) {
             perror(0);
             exit(1);
          }
-
          /* YOUR CODE HERE */
+         exit(0);
       }
 #else
       dispatch(client_socket_number);
